@@ -93,6 +93,14 @@ export default function SapperPage() {
             if (y < 0 || y >= size || x < 0 || x >= size) {
                 return;
             }
+
+            const cell = board[y][x];
+            const element = cell.element;
+
+            if (cell.revealed) {
+                return;
+            }
+
             if (!timerStarted) {
                 timerStarted = true;
                 timerInterval = setInterval(() => {
@@ -102,11 +110,7 @@ export default function SapperPage() {
                         .padStart(3, "0");
                 }, 1000);
             }
-            const cell = board[y][x];
-            const element = cell.element;
-            if (cell.revealed) {
-                return;
-            }
+
             cell.revealed = true;
             element.classList.remove(
                 "bg-[#6262f3]",
@@ -117,15 +121,6 @@ export default function SapperPage() {
             element.classList.add("bg-[#a4a2a2]", "cursor-default");
             ++revealedCount;
 
-            if (cell.number > 0) {
-                element.textContent = cell.number;
-            }
-
-            if (revealedCount === totalSafeCells) {
-                endGame(true);
-                return;
-            }
-
             if (cell.isBomb) {
                 element.textContent = "💣";
                 element.classList.remove("bg-[#a4a2a2]");
@@ -135,30 +130,28 @@ export default function SapperPage() {
                 return;
             }
 
-            for (let [dy, dx] of directions) {
-                const nextY = y + dy;
-                const nextX = x + dx;
-                if (nextY >= 0 && nextY < size && nextX >= 0 && nextX < size) {
-                    const neighbor = board[nextY][nextX];
-                    if (!neighbor.revealed && !neighbor.isBomb) {
-                        neighbor.revealed = true;
-                        neighbor.element.classList.remove(
-                            "bg-[#6262f3]",
-                            "hover:scale-105",
-                            "hover:bg-[#a0a0f4]",
-                            "cursor-pointer",
-                        );
-                        neighbor.element.classList.add(
-                            "bg-[#a4a2a2]",
-                            "cursor-default",
-                        );
-                        ++revealedCount;
-                        if (neighbor.number > 0) {
-                            neighbor.element.textContent = neighbor.number;
-                        }
-                        if (revealedCount === totalSafeCells) {
-                            endGame(true);
-                            return;
+            if (cell.number > 0) {
+                element.textContent = cell.number;
+            }
+
+            if (revealedCount === totalSafeCells) {
+                endGame(true);
+                return;
+            }
+
+            if (cell.number === 0) {
+                for (let [dy, dx] of directions) {
+                    const nextY = y + dy;
+                    const nextX = x + dx;
+                    if (
+                        nextY >= 0 &&
+                        nextY < size &&
+                        nextX >= 0 &&
+                        nextX < size
+                    ) {
+                        const neighbor = board[nextY][nextX];
+                        if (!neighbor.revealed && !neighbor.isBomb) {
+                            reveal(nextY, nextX);
                         }
                     }
                 }
@@ -232,7 +225,6 @@ export default function SapperPage() {
 
         calculateNumbers();
 
-        // Cleanup function
         return () => {
             if (timerInterval) {
                 clearInterval(timerInterval);
