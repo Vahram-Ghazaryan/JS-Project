@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+header {
+    background-color: #6616ce;
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+a:hover {
+    text-decoration: underline;
+}
