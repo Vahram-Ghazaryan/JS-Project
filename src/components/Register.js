@@ -18,7 +18,25 @@ const Register = () => {
             );
             router.push("/login");
         } catch (error) {
-            alert("Error registering user. Please try again.");
+            switch (error.code) {
+                case "auth/weak-password":
+                    alert("Password must be at least 6 characters long.");
+                    break;
+                case "auth/email-already-in-use":
+                    alert("This email is already in use. Try logging in.");
+                    break;
+                case "auth/invalid-email":
+                    alert("Invalid email format.");
+                    break;
+                case "auth/operation-not-allowed":
+                    alert("Email/password accounts are not enabled.");
+                    break;
+                case "auth/network-request-failed":
+                    alert("Network error. Please check your connection.");
+                    break;
+                default:
+                    alert("Error: " + error.message);
+            }
         }
     };
     return (
