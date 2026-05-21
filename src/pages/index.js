@@ -23,6 +23,12 @@ const Root = () => {
                 >
                     Digit Recognizer (Neural Network)
                 </Link>
+                <Link
+                    href="/cat-dog-classifier"
+                    className="px-6 py-3 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-300"
+                >
+                    Cat vs Dog Classifier (AI)
+                </Link>
             </div>
         </div>
     );
