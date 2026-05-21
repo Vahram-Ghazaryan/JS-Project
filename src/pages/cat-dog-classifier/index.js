@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Head from "next/head";
 
-/* ── ImageNet class‑name → cat | dog mapper ─────────────────────────── */
-
 const EXCLUSIONS = [
     "hot dog", "hotdog", "prairie dog", "polecat", "caterpillar",
     "catamaran", "tiger shark", "tiger beetle", "tiger snake", "tiger moth",
@@ -41,8 +39,6 @@ function matchAnimal(className) {
     return null;
 }
 
-/* ── Network architecture layers for visual ──────────────────────────── */
-
 const ARCH_LAYERS = [
     { name: "Input", units: "224×224", color: "#10b981" },
     { name: "Conv2D", units: "32", color: "#14b8a6" },
@@ -52,7 +48,6 @@ const ARCH_LAYERS = [
     { name: "Dense", units: "1000", color: "#8b5cf6" },
 ];
 
-/* ── Component ───────────────────────────────────────────────────────── */
 
 export default function CatDogClassifier() {
     const [modelStatus, setModelStatus] = useState("loading");
@@ -67,8 +62,6 @@ export default function CatDogClassifier() {
     const imgRef = useRef(null);
     const videoRef = useRef(null);
     const streamRef = useRef(null);
-
-    /* ── Load TF.js + MobileNet ──────────────────────────────────────── */
 
     useEffect(() => {
         const loadScript = (src) =>
@@ -107,13 +100,11 @@ export default function CatDogClassifier() {
         boot();
     }, []);
 
-    /* ── Classify helper ─────────────────────────────────────────────── */
-
     const classify = useCallback(
         async (imgElement) => {
             if (!modelRef) return;
             setIsProcessing(true);
-            await new Promise((r) => setTimeout(r, 30)); // let UI repaint
+            await new Promise((r) => setTimeout(r, 30)); 
 
             try {
                 const predictions = await modelRef.classify(imgElement, 10);
@@ -179,8 +170,6 @@ export default function CatDogClassifier() {
         [modelRef]
     );
 
-    /* ── File handling ────────────────────────────────────────────────── */
-
     const stopWebcam = useCallback(() => {
         if (streamRef.current) {
             streamRef.current.getTracks().forEach((t) => t.stop());
@@ -205,8 +194,6 @@ export default function CatDogClassifier() {
         if (modelStatus === "ready" && imgRef.current) classify(imgRef.current);
     }, [modelStatus, classify]);
 
-    /* ── Drag & drop ─────────────────────────────────────────────────── */
-
     const handleDragOver = (e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -220,8 +207,6 @@ export default function CatDogClassifier() {
         setIsDragging(false);
         handleFile(e.dataTransfer.files[0]);
     };
-
-    /* ── Webcam ──────────────────────────────────────────────────────── */
 
     const startWebcam = async () => {
         try {
@@ -259,8 +244,6 @@ export default function CatDogClassifier() {
         setPrediction(null);
     };
 
-    /* ── Status banner ───────────────────────────────────────────────── */
-
     const STATUS = {
         loading: { text: "Loading TensorFlow.js & MobileNet…", color: "#facc15" },
         downloading: {
@@ -274,7 +257,6 @@ export default function CatDogClassifier() {
         error: { text: "Failed to load model", color: "#f87171" },
     };
 
-    /* ── Render ───────────────────────────────────────────────────────── */
 
     return (
         <>
@@ -288,7 +270,6 @@ export default function CatDogClassifier() {
 
             <div className="min-h-screen bg-gray-950 text-white p-6">
                 <div className="max-w-5xl mx-auto">
-                    {/* ── Header ─────────────────────────────────────── */}
                     <div className="text-center mb-8">
                         <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
                             Cat vs Dog Classifier
@@ -315,7 +296,6 @@ export default function CatDogClassifier() {
                         )}
                     </div>
 
-                    {/* ── Network Architecture ───────────────────────── */}
                     {modelStatus === "ready" && (
                         <div className="mb-8 bg-gray-900 rounded-2xl p-5 border border-gray-800">
                             <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-widest">
@@ -355,11 +335,8 @@ export default function CatDogClassifier() {
                         </div>
                     )}
 
-                    {/* ── Main two‑column grid ───────────────────────── */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* ── Left: image input ──────────────────────── */}
                         <div className="bg-gray-900 rounded-2xl p-5 border border-gray-800">
-                            {/* mode switcher */}
                             <div className="flex gap-2 mb-4">
                                 <button
                                     onClick={() => clearAll()}
@@ -385,7 +362,6 @@ export default function CatDogClassifier() {
                                 </button>
                             </div>
 
-                            {/* canvas / preview / drop zone */}
                             <div className="relative">
                                 {webcamActive ? (
                                     <video
@@ -483,7 +459,6 @@ export default function CatDogClassifier() {
                             </p>
                         </div>
 
-                        {/* ── Right: prediction results ──────────────── */}
                         <div className="bg-gray-900 rounded-2xl p-5 border border-gray-800">
                             <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-widest">
                                 Prediction
@@ -491,7 +466,6 @@ export default function CatDogClassifier() {
 
                             {prediction ? (
                                 prediction.label === "unknown" ? (
-                                    /* ── unknown result ──────────────── */
                                     <div className="flex flex-col items-center justify-center h-48 text-gray-400">
                                         <div className="text-5xl mb-3">🤔</div>
                                         <p className="text-sm font-medium">
@@ -530,9 +504,7 @@ export default function CatDogClassifier() {
                                         )}
                                     </div>
                                 ) : (
-                                    /* ── cat / dog result ────────────── */
                                     <>
-                                        {/* hero badge */}
                                         <div className="flex items-center justify-center mb-6">
                                             <div className="relative">
                                                 <div
@@ -581,7 +553,6 @@ export default function CatDogClassifier() {
                                             </span>
                                         </div>
 
-                                        {/* cat ↔ dog bar */}
                                         <div className="mb-6">
                                             <div className="flex justify-between text-xs text-gray-400 mb-1">
                                                 <span>🐱 Cat</span>
@@ -623,7 +594,6 @@ export default function CatDogClassifier() {
                                             </div>
                                         </div>
 
-                                        {/* breed breakdown */}
                                         {prediction.breeds.length > 0 && (
                                             <div>
                                                 <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">
@@ -673,7 +643,6 @@ export default function CatDogClassifier() {
                                             </div>
                                         )}
 
-                                        {/* raw top‑predictions */}
                                         {prediction.topPredictions?.length >
                                             0 && (
                                             <div className="mt-4 pt-4 border-t border-gray-800">
@@ -725,7 +694,6 @@ export default function CatDogClassifier() {
                                     </>
                                 )
                             ) : (
-                                /* ── empty state ─────────────────────── */
                                 <div className="flex flex-col items-center justify-center h-48 text-gray-600">
                                     <div className="text-5xl mb-3">🐾</div>
                                     <p className="text-sm">
@@ -738,7 +706,6 @@ export default function CatDogClassifier() {
                         </div>
                     </div>
 
-                    {/* ── How it works ────────────────────────────────── */}
                     <div className="mt-6 bg-gray-900 rounded-2xl p-5 border border-gray-800">
                         <h2 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-widest">
                             How It Works
